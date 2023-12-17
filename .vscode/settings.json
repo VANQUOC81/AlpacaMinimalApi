@@ -1,0 +1,5 @@
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "bin\\Release\\net8.0\\publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/bfc8eae0-4c67-4dee-8b0a-43a5b3a1d62a/resourceGroups/rg-alpaca-minimal-api/providers/Microsoft.Web/sites/az-alpaca-minimal-api"
+}
