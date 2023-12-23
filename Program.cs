@@ -12,6 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
 // enables displaying database-related exceptions
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+// only use AddEndpointsApiExplorer if you use v6's "minimal APIs":
+// app.MapGet("/", () => "Hello World!");
+builder.Services.AddEndpointsApiExplorer();
+// add swagger generator
+builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // organizes groups to reduce repetitive code and allows for customizing entire groups of endpoints with a single call
