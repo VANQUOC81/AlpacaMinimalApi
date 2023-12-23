@@ -19,6 +19,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
+// Enable the middleware for serving the generated JSON document and the Swagger UI
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 // organizes groups to reduce repetitive code and allows for customizing entire groups of endpoints with a single call
 var todoItems = app.MapGroup("/todoitems");
 
