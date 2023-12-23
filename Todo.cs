@@ -1,3 +1,4 @@
+ #pragma warning disable CS1591
 public class Todo
 {
     public int Id { get; set; }
@@ -6,3 +7,4 @@ public class Todo
     // not returned in the reponse body because using DTO 
     public string? Secret { get; set; }
 }
+#pragma warning restore CS1591

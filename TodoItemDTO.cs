@@ -1,3 +1,4 @@
+ #pragma warning disable CS1591
 public class TodoItemDTO
 {
     public int Id { get; set; }
@@ -8,3 +9,4 @@ public class TodoItemDTO
     public TodoItemDTO(Todo todoItem) =>
     (Id, Name, IsComplete) = (todoItem.Id, todoItem.Name, todoItem.IsComplete);
 }
+#pragma warning restore CS1591
