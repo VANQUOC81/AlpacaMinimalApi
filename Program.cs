@@ -8,6 +8,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
 // adds the database context to the dependency injection (DI)
@@ -38,10 +39,7 @@ options =>
             Url = new Uri("https://example.com/license")
         }
     });
-    
-    // using System.Reflection;
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    options.EnableAnnotations();
 });
 
 var app = builder.Build();
@@ -56,7 +54,7 @@ if (app.Environment.IsDevelopment())
 // organizes groups to reduce repetitive code and allows for customizing entire groups of endpoints with a single call
 var todoItems = app.MapGroup("/todoitems");
 
-todoItems.MapGet("/", GetAllTodos);
+todoItems.MapGet("/", GetAllTodos).WithMetadata(new SwaggerOperationAttribute("summary001", "description001"));;
 todoItems.MapGet("/complete", GetCompleteTodos);
 todoItems.MapGet("/{id}", GetTodo);
 todoItems.MapPost("/", CreateTodo);
