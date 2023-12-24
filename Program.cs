@@ -5,10 +5,10 @@
 
 // app.Run();
 
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
+using Alpaca.Markets;
 
 var builder = WebApplication.CreateBuilder(args);
 // adds the database context to the dependency injection (DI)
@@ -53,6 +53,7 @@ if (app.Environment.IsDevelopment())
 
 // organizes groups to reduce repetitive code and allows for customizing entire groups of endpoints with a single call
 var todoItems = app.MapGroup("/todoitems");
+var apiAlpaca = app.MapGroup("/apialpaca");
 
 // MapGet and with annotations.
 todoItems.MapGet("/", GetAllTodos).WithMetadata(new SwaggerOperationAttribute("summary001", "description001"));;
@@ -61,6 +62,8 @@ todoItems.MapGet("/{id}", GetTodo);
 todoItems.MapPost("/", CreateTodo);
 todoItems.MapPut("/{id}", UpdateTodo);
 todoItems.MapDelete("/{id}", DeleteTodo);
+
+apiAlpaca.MapGet("/getclock", GetClock);
 
 app.Run();
 
@@ -71,6 +74,27 @@ static async Task<IResult> GetAllTodos(TodoDb db)
 
 static async Task<IResult> GetCompleteTodos(TodoDb db) {
     return TypedResults.Ok(await db.Todos.Where(t => t.IsComplete).Select(x => new TodoItemDTO(x)).ToListAsync());
+}
+
+static async Task<IResult> GetClock() {
+    
+      const String KEY_ID = "PKUPOVPGCHJIVR5B0BEC";
+
+      const String SECRET_KEY = "kheLqZujdbPtIdv9x6i9pGfG8IveBBewaGJlNksT";
+
+      var client = Alpaca.Markets.Environments.Paper
+                .GetAlpacaTradingClient(new SecretKey(KEY_ID, SECRET_KEY));
+
+            var clock = await client.GetClockAsync();
+
+            if (clock != null)
+            {
+                Console.WriteLine(
+                    "Timestamp: {0}, NextOpen: {1}, NextClose: {2}",
+                    clock.TimestampUtc, clock.NextOpenUtc, clock.NextCloseUtc);
+            }
+
+    return TypedResults.Ok(clock);
 }
 
 static async Task<IResult> GetTodo(int id, TodoDb db)
