@@ -49,7 +49,7 @@ var todoItems = app.MapGroup("/todoitems");
 var apiAlpaca = app.MapGroup("/apialpaca");
 
 // MapGet and with annotations.
-todoItems.MapGet("/", GetAllTodos).WithMetadata(new SwaggerOperationAttribute("summary001", "description001")); ;
+todoItems.MapGet("/", TodoService.GetAllTodos).WithMetadata(new SwaggerOperationAttribute("summary001", "description001")); ;
 todoItems.MapGet("/complete", GetCompleteTodos);
 todoItems.MapGet("/{id}", GetTodo);
 todoItems.MapPost("/", CreateTodo);
@@ -60,10 +60,10 @@ apiAlpaca.MapGet("/getclock", GetClock);
 
 app.Run();
 
-static async Task<IResult> GetAllTodos(TodoDb db)
-{
-    return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO(x)).ToArrayAsync());
-}
+// static async Task<IResult> GetAllTodos(TodoDb db)
+// {
+//     return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO(x)).ToArrayAsync());
+// }
 
 static async Task<IResult> GetCompleteTodos(TodoDb db)
 {

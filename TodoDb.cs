@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 
-// This class is internal by default
-class TodoDb : DbContext
+/// <summary>
+/// TodoDb DbContext class
+/// </summary>
+public class TodoDb : DbContext
 {
+    #pragma warning disable CS1591
     public TodoDb(DbContextOptions<TodoDb> options): base(options) { }
 
     public DbSet<Todo> Todos => Set<Todo>();
+    #pragma warning restore CS1591
 }
