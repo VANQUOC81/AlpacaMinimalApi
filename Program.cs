@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Alpaca.Markets;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // adds the database context to the dependency injection (DI)
