@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
-using Alpaca.Markets;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,21 +56,6 @@ todoItems.MapPost("/", TodoService.CreateTodo);
 todoItems.MapPut("/{id}", TodoService.UpdateTodo);
 todoItems.MapDelete("/{id}", TodoService.DeleteTodo);
 
-apiAlpaca.MapGet("/getclock", GetClock);
+apiAlpaca.MapGet("/getclock", AlpacaService.GetClock);
 
 app.Run();
-
-static async Task<IResult> GetClock()
-{
-    var client = Alpaca.Markets.Environments.Paper
-              .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
-
-    var clock = await client.GetClockAsync();
-
-    if (clock != null)
-    {
-        return TypedResults.Ok(clock);
-    }
-
-    return TypedResults.NotFound();
-}
