@@ -1,10 +1,3 @@
-// var builder = WebApplication.CreateBuilder(args);
-// var app = builder.Build();
-
-// app.MapGet("/", () => "Hello World!");
-
-// app.Run();
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -56,7 +49,7 @@ var todoItems = app.MapGroup("/todoitems");
 var apiAlpaca = app.MapGroup("/apialpaca");
 
 // MapGet and with annotations.
-todoItems.MapGet("/", GetAllTodos).WithMetadata(new SwaggerOperationAttribute("summary001", "description001"));;
+todoItems.MapGet("/", GetAllTodos).WithMetadata(new SwaggerOperationAttribute("summary001", "description001")); ;
 todoItems.MapGet("/complete", GetCompleteTodos);
 todoItems.MapGet("/{id}", GetTodo);
 todoItems.MapPost("/", CreateTodo);
@@ -72,29 +65,24 @@ static async Task<IResult> GetAllTodos(TodoDb db)
     return TypedResults.Ok(await db.Todos.Select(x => new TodoItemDTO(x)).ToArrayAsync());
 }
 
-static async Task<IResult> GetCompleteTodos(TodoDb db) {
+static async Task<IResult> GetCompleteTodos(TodoDb db)
+{
     return TypedResults.Ok(await db.Todos.Where(t => t.IsComplete).Select(x => new TodoItemDTO(x)).ToListAsync());
 }
 
-static async Task<IResult> GetClock() {
-    
-      const String KEY_ID = "PKUPOVPGCHJIVR5B0BEC";
+static async Task<IResult> GetClock()
+{
+    var client = Alpaca.Markets.Environments.Paper
+              .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
 
-      const String SECRET_KEY = "kheLqZujdbPtIdv9x6i9pGfG8IveBBewaGJlNksT";
+    var clock = await client.GetClockAsync();
 
-      var client = Alpaca.Markets.Environments.Paper
-                .GetAlpacaTradingClient(new SecretKey(KEY_ID, SECRET_KEY));
+    if (clock != null)
+    {
+        return TypedResults.Ok(clock);
+    }
 
-            var clock = await client.GetClockAsync();
-
-            if (clock != null)
-            {
-                Console.WriteLine(
-                    "Timestamp: {0}, NextOpen: {1}, NextClose: {2}",
-                    clock.TimestampUtc, clock.NextOpenUtc, clock.NextCloseUtc);
-            }
-
-    return TypedResults.Ok(clock);
+    return TypedResults.NotFound();
 }
 
 static async Task<IResult> GetTodo(int id, TodoDb db)
