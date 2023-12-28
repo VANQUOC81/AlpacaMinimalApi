@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using Alpaca.Markets;
+using Microsoft.OpenApi.Extensions;
 
 namespace Services
 {
@@ -56,11 +57,11 @@ namespace Services
         {
             // Convert the string to the Exchange enum type
             Exchange exchangeEnum = GetEnumValueFromEnumMemberAttribute<Exchange>(exchange);
-            
+
             if (exchangeEnum == Exchange.Unknown)
             {
                 // String doesn't match any enum value
-                return TypedResults.Problem($"Failed to convert string '{exchange}' to enum value.");
+                return TypedResults.Problem($"Failed to convert string '{exchange}' to Exchange type enum value.");
             }
 
             var client = Alpaca.Markets.Environments.Paper
@@ -74,33 +75,33 @@ namespace Services
                 return TypedResults.Problem("No active assets available for trading.");
             }
 
-            return TypedResults.Ok(listAssets.Count);
+            return TypedResults.Ok(listAssets.Select(assets => assets.Name + " : " + assets.Symbol).OrderBy(name => name));
         }
 
-    // Custom method to get enum value from EnumMemberAttribute value
-    private static T GetEnumValueFromEnumMemberAttribute<T>(string value)
-    {
-        Type enumType = typeof(T);
-
-        // Check if the type is an enum
-        if (!enumType.IsEnum)
+        // Custom method to get enum value from EnumMemberAttribute value
+        private static T? GetEnumValueFromEnumMemberAttribute<T>(string value)
         {
-            throw new ArgumentException("T must be an enumerated type");
-        }
+            Type enumType = typeof(T);
 
-        // Iterate through each enum member and get the EnumMemberAttribute value
-        foreach (FieldInfo field in enumType.GetFields())
-        {
-            if (Attribute.GetCustomAttribute(field, typeof(EnumMemberAttribute)) is EnumMemberAttribute attribute)
+            // Check if the type is an enum
+            if (!enumType.IsEnum)
             {
-                if (attribute.Value == value)
+                throw new ArgumentException("T must be an enumerated type");
+            }
+
+            // Iterate through each enum member and get the EnumMemberAttribute value
+            foreach (FieldInfo field in enumType.GetFields())
+            {
+                if (Attribute.GetCustomAttribute(field, typeof(EnumMemberAttribute)) is EnumMemberAttribute attribute)
                 {
-                    return (T)field.GetValue(null);
+                    if (attribute.Value == value)
+                    {
+                        return (T)field.GetValue(null);
+                    }
                 }
             }
-        }
 
-        return default; // Return default enum value if not found
-    }
+            return default; // Return default enum value if not found
+        }
     }
 }
