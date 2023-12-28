@@ -46,7 +46,7 @@ if (app.Environment.IsDevelopment())
 
 // organizes groups to reduce repetitive code and allows for customizing entire groups of endpoints with a single call
 var todoItems = app.MapGroup("/todoitems");
-var apiAlpaca = app.MapGroup("/apialpaca");
+var apiAlpaca = app.MapGroup("/api/alpaca/v1");
 
 // MapGet and with annotations.
 todoItems.MapGet("/", TodoService.GetAllTodos).WithMetadata(new SwaggerOperationAttribute("summary001", "description001")); ;
@@ -57,5 +57,6 @@ todoItems.MapPut("/{id}", TodoService.UpdateTodo);
 todoItems.MapDelete("/{id}", TodoService.DeleteTodo);
 
 apiAlpaca.MapGet("/getclock", AlpacaService.GetClock);
+apiAlpaca.MapGet("/getaccount", AlpacaService.GetAccount);
 
 app.Run();
