@@ -96,7 +96,7 @@ namespace Services
                 {
                     if (attribute.Value == value)
                     {
-                        return (T)field.GetValue(null);
+                        return (T?)field.GetValue(obj: null);
                     }
                 }
             }
