@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using Alpaca.Markets;
-using Microsoft.OpenApi.Extensions;
 
 namespace Services
 {
