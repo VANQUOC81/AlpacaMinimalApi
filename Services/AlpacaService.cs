@@ -77,6 +77,8 @@ namespace Services
             return TypedResults.Ok(listAssets.Select(assets => assets.Name + " : " + assets.Symbol).OrderBy(name => name));
         }
 
+        #region AlpacaService helpers
+
         // Custom method to get enum value from EnumMemberAttribute value
         private static T? GetEnumValueFromEnumMemberAttribute<T>(string value)
         {
@@ -102,5 +104,7 @@ namespace Services
 
             return default; // Return default enum value if not found
         }
+
+        #endregion
     }
 }
