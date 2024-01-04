@@ -77,6 +77,21 @@ namespace Services
             return TypedResults.Ok(listAssets.Select(assets => assets.Name + " : " + assets.Symbol).OrderBy(name => name));
         }
 
+        /// <summary>
+        /// Submit Market Buy Order
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<IResult> SubmitMarketOrder(string symbol)
+        {
+            var client = Alpaca.Markets.Environments.Paper
+                      .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
+
+            // Submit a market order to buy 1 share of given symbol at market price
+            var order = await client.PostOrderAsync(MarketOrder.Buy(symbol, 1));
+
+            return TypedResults.Ok($"Market Order Buy executed for symbol {symbol}");
+        }
+
         #region AlpacaService helpers
 
         // Custom method to get enum value from EnumMemberAttribute value

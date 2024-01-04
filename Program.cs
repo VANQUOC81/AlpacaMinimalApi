@@ -59,5 +59,6 @@ todoItems.MapDelete("/{id}", TodoService.DeleteTodo);
 apiAlpaca.MapGet("/getclock", AlpacaService.GetClock);
 apiAlpaca.MapGet("/getaccount", AlpacaService.GetAccount);
 apiAlpaca.MapGet("/listassets/{exchange}", AlpacaService.ListAssets);
+apiAlpaca.MapPost("/order/{symbol}", AlpacaService.SubmitMarketOrder);
 
 app.Run();
