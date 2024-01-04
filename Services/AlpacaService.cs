@@ -81,7 +81,7 @@ namespace Services
         /// Submit Market Buy Order
         /// </summary>
         /// <returns></returns>
-        public static async Task<IResult> SubmitMarketOrder(string symbol)
+        public static async Task<IResult> SubmitMarketBuyOrder(string symbol)
         {
             var client = Alpaca.Markets.Environments.Paper
                       .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
@@ -90,6 +90,34 @@ namespace Services
             var order = await client.PostOrderAsync(MarketOrder.Buy(symbol, 1));
 
             return TypedResults.Ok($"Market Order Buy executed for symbol {symbol}");
+        }
+
+        /// <summary>
+        /// Cancel Order
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<IResult> CancelOrder(string orderId)
+        {
+            var client = Alpaca.Markets.Environments.Paper
+                      .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
+
+            var guid = new Guid(orderId);
+
+            IOrder order;
+
+            try
+            {
+                order = await client.GetOrderAsync(guid);
+            }
+            catch (Exception exception)
+            {
+                return TypedResults.Problem(exception.Message);
+            }
+
+            // Cancel order by supplying orderid guid
+            var canceledOrder = await client.CancelOrderAsync(order.OrderId);
+
+            return TypedResults.Ok($"Order with OrderId {guid} cancelled");
         }
 
         #region AlpacaService helpers
