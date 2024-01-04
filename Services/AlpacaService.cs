@@ -86,8 +86,15 @@ namespace Services
             var client = Alpaca.Markets.Environments.Paper
                       .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
 
-            // Submit a market order to buy 1 share of given symbol at market price
-            var order = await client.PostOrderAsync(MarketOrder.Buy(symbol, 1));
+            try
+            {
+                // Submit a market order to buy 1 share of given symbol at market price
+                var order = await client.PostOrderAsync(MarketOrder.Buy(symbol, 1));
+            }
+            catch (Exception exception)
+            {
+                return TypedResults.Problem(exception.Message);
+            }
 
             return TypedResults.Ok($"Market Order Buy executed for symbol {symbol}");
         }
@@ -129,8 +136,15 @@ namespace Services
             var client = Alpaca.Markets.Environments.Paper
                       .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
 
-            // Submit a market order to sell 1 share of given symbol at market price
-            var order = await client.PostOrderAsync(MarketOrder.Sell(symbol, 1));
+            try
+            {
+                // Submit a market order to sell 1 share of given symbol at market price
+                var order = await client.PostOrderAsync(MarketOrder.Sell(symbol, 1));
+            }
+            catch (Exception exception)
+            {
+                return TypedResults.Problem(exception.Message);
+            }
 
             return TypedResults.Ok($"Market Order Sell executed for symbol {symbol}");
         }
