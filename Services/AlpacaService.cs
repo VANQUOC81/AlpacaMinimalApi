@@ -120,6 +120,21 @@ namespace Services
             return TypedResults.Ok($"Order with OrderId {guid} cancelled");
         }
 
+        /// <summary>
+        /// Submit Market Sell Order
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<IResult> SubmitMarketSellOrder(string symbol)
+        {
+            var client = Alpaca.Markets.Environments.Paper
+                      .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
+
+            // Submit a market order to sell 1 share of given symbol at market price
+            var order = await client.PostOrderAsync(MarketOrder.Sell(symbol, 1));
+
+            return TypedResults.Ok($"Market Order Sell executed for symbol {symbol}");
+        }
+
         #region AlpacaService helpers
 
         // Custom method to get enum value from EnumMemberAttribute value
