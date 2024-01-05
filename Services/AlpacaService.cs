@@ -109,7 +109,6 @@ namespace Services
 
                 if (asset.IsTradable)
                 {
-                    // TODO generiek maken voor buy sell etc, obv van de parameters in tradingviewmessage class.
                     // Submit a market order to buy 1 share of given symbol at market price
                     IOrder submittedOrder = await client.PostOrderAsync(MarketOrder.Buy(message.Ticker, Convert.ToInt32(message.MarketPositionSize)));
                 }
