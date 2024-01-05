@@ -86,31 +86,43 @@ namespace Services
             var client = Alpaca.Markets.Environments.Paper
                       .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
 
-            if (string.IsNullOrWhiteSpace(message.Symbol) || (message.Quantity <= 0))
+            if (string.IsNullOrWhiteSpace(message.Ticker) || string.IsNullOrWhiteSpace(message.MarketPositionSize))
             {
-                return TypedResults.Problem("No symbol or supplied quantity is zero or negative");
+                return TypedResults.Problem("Ticker or Market Position Size is empty");
+            }
+
+            bool result = int.TryParse(message.MarketPositionSize, out int marketPositionSize);
+
+            if (!result)
+            {
+                return TypedResults.Problem("MarketPositionSize could not be parse to int");
+            }
+
+            if (marketPositionSize <= 0)
+            {
+                return TypedResults.Problem("MarketPositionSize is zero or negative");
             }
 
             try
             {
-                var asset = await client.GetAssetAsync(message.Symbol);
+                var asset = await client.GetAssetAsync(message.Ticker);
 
                 if (asset.IsTradable)
                 {
                     // Submit a market order to buy 1 share of given symbol at market price
-                    IOrder submittedOrder = await client.PostOrderAsync(MarketOrder.Buy(message.Symbol, message.Quantity));
+                    IOrder submittedOrder = await client.PostOrderAsync(MarketOrder.Buy(message.Ticker, Convert.ToInt32(message.MarketPositionSize)));
                 }
                 else
                 {
-                    return TypedResults.Problem($"{message.Symbol} found but is not tradeable");
+                    return TypedResults.Problem($"{message.Ticker} found but is not tradeable");
                 }
             }
             catch (Exception exception)
             {
                 return TypedResults.Problem(exception.Message);
             }
-
-            return TypedResults.Ok($"Market Order Buy executed for symbol {message.Symbol}");
+            
+            return TypedResults.Ok($"Market Order Buy executed for symbol {message.Ticker}");
         }
 
         /// <summary>
