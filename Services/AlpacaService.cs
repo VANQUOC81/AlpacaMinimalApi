@@ -81,28 +81,28 @@ namespace Services
         /// Submit Market Buy Order
         /// </summary>
         /// <returns></returns>
-        public static async Task<IResult> SubmitMarketBuyOrder(Order order)
+        public static async Task<IResult> SubmitMarketBuyOrder(TradingViewMessage message)
         {
             var client = Alpaca.Markets.Environments.Paper
                       .GetAlpacaTradingClient(new SecretKey(ApiConstants.AlpacaKeyId, ApiConstants.AlpacaSecretKey));
 
-            if (string.IsNullOrWhiteSpace(order.Symbol) || (order.Quantity <= 0))
+            if (string.IsNullOrWhiteSpace(message.Symbol) || (message.Quantity <= 0))
             {
                 return TypedResults.Problem("No symbol or supplied quantity is zero or negative");
             }
 
             try
             {
-                var asset = await client.GetAssetAsync(order.Symbol);
+                var asset = await client.GetAssetAsync(message.Symbol);
 
                 if (asset.IsTradable)
                 {
                     // Submit a market order to buy 1 share of given symbol at market price
-                    IOrder submittedOrder = await client.PostOrderAsync(MarketOrder.Buy(order.Symbol, order.Quantity));
+                    IOrder submittedOrder = await client.PostOrderAsync(MarketOrder.Buy(message.Symbol, message.Quantity));
                 }
                 else
                 {
-                    return TypedResults.Problem($"{order.Symbol} found but is not tradeable");
+                    return TypedResults.Problem($"{message.Symbol} found but is not tradeable");
                 }
             }
             catch (Exception exception)
@@ -110,7 +110,7 @@ namespace Services
                 return TypedResults.Problem(exception.Message);
             }
 
-            return TypedResults.Ok($"Market Order Buy executed for symbol {order.Symbol}");
+            return TypedResults.Ok($"Market Order Buy executed for symbol {message.Symbol}");
         }
 
         /// <summary>
